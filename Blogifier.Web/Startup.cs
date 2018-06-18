@@ -14,88 +14,88 @@ using Serilog.Events;
 
 namespace Blogifier
 {
-    public class Startup
-    {
-        public Startup(IConfiguration configuration)
-        {
-            Configuration = configuration;
+	public class Startup
+	{
+		public Startup(IConfiguration configuration)
+		{
+			Configuration = configuration;
 
-            Log.Logger = new LoggerConfiguration()
-              .Enrich.FromLogContext()
-              .WriteTo.RollingFile("Logs/blogifier-{Date}.txt", LogEventLevel.Warning)
-              .CreateLogger();
-        }
+			Log.Logger = new LoggerConfiguration()
+				.Enrich.FromLogContext()
+				.WriteTo.RollingFile("Logs/blogifier-{Date}.txt", LogEventLevel.Warning)
+				.CreateLogger();
+		}
 
-        public IConfiguration Configuration { get; }
+		public IConfiguration Configuration { get; }
 
-        public void ConfigureServices(IServiceCollection services)
-        {
-            System.Action<DbContextOptionsBuilder> databaseOptions = options => 
-                options.UseSqlite(Configuration.GetConnectionString("DefaultConnection"));
+		public void ConfigureServices(IServiceCollection services)
+		{
+			System.Action<DbContextOptionsBuilder> databaseOptions = options =>
+					options.UseSqlite(Configuration.GetConnectionString("DefaultConnection"));
 
-            services.AddDbContext<ApplicationDbContext>(databaseOptions);
+			services.AddDbContext<ApplicationDbContext>(databaseOptions);
 
-            services.AddIdentity<ApplicationUser, IdentityRole>()
-                .AddEntityFrameworkStores<ApplicationDbContext>()
-                .AddDefaultTokenProviders();
+			services.AddIdentity<ApplicationUser, IdentityRole>()
+					.AddEntityFrameworkStores<ApplicationDbContext>()
+					.AddDefaultTokenProviders();
 
-            services.AddLogging(loggingBuilder =>
-                loggingBuilder.AddSerilog(dispose: true));
+			services.AddLogging(loggingBuilder =>
+					loggingBuilder.AddSerilog(dispose: true));
 
-            services.AddMvc()
-            .ConfigureApplicationPartManager(p =>
-            {
-                foreach (var assembly in Core.Configuration.GetAssemblies())
-                {
-                    if (assembly.GetName().Name != "Blogifier.Web" && assembly.GetName().Name != "Blogifier.Core")
-                    {
-                        p.ApplicationParts.Add(new AssemblyPart(assembly));
-                    }
-                }
-            });
+			services.AddMvc()
+			.ConfigureApplicationPartManager(p =>
+			{
+				foreach (var assembly in Core.Configuration.GetAssemblies())
+				{
+					if (assembly.GetName().Name != "Blogifier.Web" && assembly.GetName().Name != "Blogifier.Core")
+					{
+						p.ApplicationParts.Add(new AssemblyPart(assembly));
+					}
+				}
+			});
 
-            services.AddBlogifier(databaseOptions, Configuration);
-        }
+			services.AddBlogifier(databaseOptions, Configuration);
+		}
 
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
-        {
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-                app.UseDatabaseErrorPage();
-            }
+		public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+		{
+			if (env.IsDevelopment())
+			{
+				app.UseDeveloperExceptionPage();
+				app.UseDatabaseErrorPage();
+			}
 
-            app.UseStaticFiles();
+			app.UseStaticFiles();
 
-            app.UseAuthentication();
+			app.UseAuthentication();
 
-            app.UseETagger();
+			app.UseETagger();
 
-            app.UseMvc(routes =>
-            {
-                routes.MapRoute(
-                    name: "default",
-                    template: "{controller=Blog}/{action=Index}/{id?}");
-            });
+			app.UseMvc(routes =>
+			{
+				routes.MapRoute(
+									name: "default",
+									template: "{controller=Blog}/{action=Index}/{id?}");
+			});
 
-            app.UseBlogifier(env);
+			app.UseBlogifier(env);
 
-            if (!Core.Common.ApplicationSettings.UseInMemoryDatabase && Core.Common.ApplicationSettings.InitializeDatabase)
-            {
-                try
-                {
-                    using (var scope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope())
-                    {
-                        var db = scope.ServiceProvider.GetService<ApplicationDbContext>().Database;
-                        db.EnsureCreated();
-                        if (db.GetPendingMigrations() != null)
-                        {
-                            db.Migrate();
-                        }
-                    }
-                }
-                catch { }
-            }
-        }
-    }
+			if (!Core.Common.ApplicationSettings.UseInMemoryDatabase && Core.Common.ApplicationSettings.InitializeDatabase)
+			{
+				try
+				{
+					using (var scope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope())
+					{
+						var db = scope.ServiceProvider.GetService<ApplicationDbContext>().Database;
+						db.EnsureCreated();
+						if (db.GetPendingMigrations() != null)
+						{
+							db.Migrate();
+						}
+					}
+				}
+				catch { }
+			}
+		}
+	}
 }

@@ -24,21 +24,19 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Include="wwwroot\Properties\PublishProfiles\FolderProfile.pubxml" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Blogifier.Core\Blogifier.Core.csproj" />
   </ItemGroup>
 
-  <Target Name="PostBuild" 
-          AfterTargets="PostBuildEvent" 
-          Condition="Exists('$(SolutionDir)Packages\Widgets\Newsletter\bin\Debug\netcoreapp2.0\Newsletter.dll')">
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent" Condition="Exists('$(SolutionDir)Packages\Widgets\Newsletter\bin\Debug\netcoreapp2.0\Newsletter.dll')">
         <PropertyGroup>
             <WidgetBaseDir>$(SolutionDir)Packages\Widgets\</WidgetBaseDir>
         </PropertyGroup>
-    <Copy SourceFiles="$(WidgetBaseDir)Newsletter\bin\$(Configuration)\$(TargetFramework)\Newsletter.dll"
-          DestinationFolder="$(TargetDir)"
-          Condition="Exists('$(WidgetBaseDir)Newsletter\bin\$(Configuration)\$(TargetFramework)\Newsletter.dll')"/>
-    <Copy SourceFiles="$(WidgetBaseDir)PostList\bin\$(Configuration)\$(TargetFramework)\PostList.dll"
-          DestinationFolder="$(TargetDir)"
-          Condition="Exists('$(WidgetBaseDir)PostList\bin\$(Configuration)\$(TargetFramework)\PostList.dll')"/>
+    <Copy SourceFiles="$(WidgetBaseDir)Newsletter\bin\$(Configuration)\$(TargetFramework)\Newsletter.dll" DestinationFolder="$(TargetDir)" Condition="Exists('$(WidgetBaseDir)Newsletter\bin\$(Configuration)\$(TargetFramework)\Newsletter.dll')" />
+    <Copy SourceFiles="$(WidgetBaseDir)PostList\bin\$(Configuration)\$(TargetFramework)\PostList.dll" DestinationFolder="$(TargetDir)" Condition="Exists('$(WidgetBaseDir)PostList\bin\$(Configuration)\$(TargetFramework)\PostList.dll')" />
   </Target>
 
 </Project>
