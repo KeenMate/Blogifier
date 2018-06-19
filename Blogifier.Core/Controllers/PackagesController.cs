@@ -11,45 +11,46 @@ using System.Threading.Tasks;
 
 namespace Blogifier.Core.Controllers
 {
-    [Authorize]
-    [Route("admin/[controller]")]
-    public class PackagesController : Controller
+	[Authorize]
+	[Route("admin/[controller]")]
+	public class PackagesController : Controller
 	{
 		private readonly string _theme;
-        IUnitOfWork _db;
-        IPackageService _pkgs;
+		IUnitOfWork _db;
+		IPackageService _pkgs;
 
 		public PackagesController(IUnitOfWork db, IPackageService pkgs)
 		{
 			_db = db;
-            _pkgs = pkgs;
+			_pkgs = pkgs;
 			_theme = $"~/{ApplicationSettings.BlogAdminFolder}/";
 		}
 
-        [VerifyProfile]
-        [HttpGet("widgets")]
-        public async Task<IActionResult> Widgets()
-        {
-            var model = new AdminPackagesModel {
-                Profile = GetProfile(),
-                Packages = await _pkgs.Find(PackageType.Widgets)
-            };
-            return View($"{_theme}Packages/Widgets.cshtml", model);
-        }
+		[VerifyProfile]
+		[HttpGet("widgets")]
+		public async Task<IActionResult> Widgets()
+		{
+			var model = new AdminPackagesModel
+			{
+				Profile = GetProfile(),
+				Packages = await _pkgs.Find(PackageType.Widgets)
+			};
+			return View($"{_theme}Packages/Widgets.cshtml", model);
+		}
 
-        [VerifyProfile]
-        [HttpGet("themes")]
-        public IActionResult Themes()
-        {
-            var model = new AdminPackagesModel { Profile = GetProfile() };
-            model.Packages = new List<PackageListItem>();
+		[VerifyProfile]
+		[HttpGet("themes")]
+		public IActionResult Themes()
+		{
+			var model = new AdminPackagesModel { Profile = GetProfile() };
+			model.Packages = new List<PackageListItem>();
 
-            return View($"{_theme}Packages/Themes.cshtml", model);
-        }
+			return View($"{_theme}Packages/Themes.cshtml", model);
+		}
 
-        private Profile GetProfile()
-        {
-            return _db.Profiles.Single(b => b.IdentityName == User.Identity.Name);
-        }
-    }
+		private Profile GetProfile()
+		{
+			return _db.Profiles.Single(b => b.IdentityName == User.Identity.Name);
+		}
+	}
 }
