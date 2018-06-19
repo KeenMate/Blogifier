@@ -24,8 +24,15 @@ namespace Blogifier.Core.Data.Models
 
 	public class PackageListItem
 	{
+		private string controllerName = null;
+
 		[Required]
 		public string Title { get; set; }
+		public string ControllerName
+		{
+			get => controllerName;
+			set => controllerName = value;
+		}
 		public string Description { get; set; }
 		public string Icon { get; set; }
 		public string Cover { get; set; }

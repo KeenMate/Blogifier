@@ -1,5 +1,6 @@
 ﻿using Blogifier.Core;
 using Blogifier.Core.Middleware;
+using Blogifier.Core.Services;
 using Blogifier.Data;
 using Blogifier.Models;
 using Microsoft.AspNetCore.Builder;
@@ -31,7 +32,7 @@ namespace Blogifier
 		public void ConfigureServices(IServiceCollection services)
 		{
 			System.Action<DbContextOptionsBuilder> databaseOptions = options =>
-					options.UseSqlite(Configuration.GetConnectionString("DefaultConnection"));
+					options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
 
 			services.AddDbContext<ApplicationDbContext>(databaseOptions);
 
@@ -41,6 +42,8 @@ namespace Blogifier
 
 			services.AddLogging(loggingBuilder =>
 					loggingBuilder.AddSerilog(dispose: true));
+
+			services.AddSingleton<IJSONService>(new JSONService());
 
 			services.AddMvc()
 			.ConfigureApplicationPartManager(p =>
